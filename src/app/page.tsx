@@ -16,7 +16,7 @@ export default function Home() {
   const [price, setPrice] = useState("");
   const [type, setType] = useState("education");
   const [bookingRequired, setBookingRequired] = useState(false);
-  const [accessibility, setAccessibility] = useState(0.5);
+  const [accessibility, setAccessibility] = useState(0);
 
   useEffect(() => {
     const savedTasks: Task[] = JSON.parse(localStorage.getItem("tasks") || "[]");
@@ -35,7 +35,7 @@ export default function Home() {
     setPrice("");
     setType("education");
     setBookingRequired(false);
-    setAccessibility(0.5);
+    setAccessibility(0.0);
   };
 
   return (
