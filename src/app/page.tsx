@@ -1,95 +1,57 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client";
+import { useState, useEffect } from "react";
+import { Task } from "@/utils/Types";
+import ActivityInput from "@/components/ActivityInput";
+import PriceInput from "@/components/PriceInput";
+import TypeSelect from "@/components/TypeSelect";
+import BookingCheckbox from "@/components/BookingCheckbox";
+import AccessibilitySlider from "@/components/AccessibilitySlider";
+import TodoList from "@/components/TodoList";
+import TodoSummary from "@/components/TodoSummary";
+import "./page.scss";
 
 export default function Home() {
-  return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>src/app/page.tsx</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [activity, setActivity] = useState("");
+  const [price, setPrice] = useState("");
+  const [type, setType] = useState("education");
+  const [bookingRequired, setBookingRequired] = useState(false);
+  const [accessibility, setAccessibility] = useState(0.5);
 
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+  useEffect(() => {
+    const savedTasks: Task[] = JSON.parse(localStorage.getItem("tasks") || "[]");
+    setTasks(savedTasks);
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+  }, [tasks]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const newTask: Task = { activity, price: parseFloat(price), type, bookingRequired, accessibility };
+    setTasks([...tasks, newTask]);
+    setActivity("");
+    setPrice("");
+    setType("education");
+    setBookingRequired(false);
+    setAccessibility(0.5);
+  };
+
+  return (
+    <div className="container">
+      <h1>To-Do List</h1>
+      <form onSubmit={handleSubmit}>
+        <ActivityInput activity={activity} setActivity={setActivity} />
+        <PriceInput price={price} setPrice={setPrice} />
+        <TypeSelect type={type} setType={setType} />
+        <BookingCheckbox bookingRequired={bookingRequired} setBookingRequired={setBookingRequired} />
+        <AccessibilitySlider accessibility={accessibility} setAccessibility={setAccessibility} />
+        <button type="submit">Add Task</button>
+      </form>
+
+      <TodoSummary tasks={tasks} />
+      <TodoList tasks={tasks} setTasks={setTasks} />
     </div>
   );
 }
